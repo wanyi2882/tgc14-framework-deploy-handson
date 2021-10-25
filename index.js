@@ -23,10 +23,16 @@ app.use(
   })
 );
 
+// require our custom routers
+const landingRoutes = require('./routes/landing')
+
 async function main() {
-  app.get('/', (req,res)=> {
-      res.send("it's alive");
-  })
+
+    // first arg - the prefix
+    // second arg - if it is a router
+    // then the routes to use if the path
+    // begins with the prefix
+    app.use('/', landingRoutes);
 }
 
 main();

@@ -7,15 +7,15 @@ const router = express.Router(); // Router() will return a new
 // A router object can contain routes
 
 router.get('/', (req,res)=>{
-    res.send("Welcome to our home page");
+    res.render('landing/welcome')
 })
 
 router.get('/about-us', (req,res)=>{
-    res.send("About Us");
+    res.render('landing/about-us')
 })
 
 router.get('/contact-us', (req,res)=>{
-    res.send("Contact Us");
+    res.render('landing/contact-us')
 })
 // export out the router object so that other js files can use
 // it

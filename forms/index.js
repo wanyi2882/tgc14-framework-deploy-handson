@@ -26,7 +26,7 @@ var bootstrapField = function (name, object) {
     return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-const createProductForm = (allCateogries) => {
+const createProductForm = (allCateogries, allTags) => {
     // create a new form
     return forms.create({
         // <input type="text" name="name" class="form-label"/>
@@ -61,7 +61,15 @@ const createProductForm = (allCateogries) => {
             },
             'widget': widgets.select(),
             'choices': allCateogries
-
+        }),
+        'tags': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses:{
+                'label':['form-label']
+            },
+            widget: widgets.multipleSelect(),
+            choices: allTags
         })
 
     })

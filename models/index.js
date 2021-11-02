@@ -10,6 +10,9 @@ const Product = bookshelf.model('Product',{
     // the function name must match the lower-case form of the model's name
     category() {
         return this.belongsTo('Category')
+    },
+    tags(){
+        return this.belongsToMany('Tag');
     }
 });
 
@@ -21,4 +24,11 @@ const Category = bookshelf.model('Category',{
     }
 })
 
-module.exports = { Product, Category };
+const Tag = bookshelf.model('Tag', {
+    'tableName':'tags',
+    products() {
+        return this.belongsToMany('Product')
+    }
+})
+
+module.exports = { Product, Category, Tag };

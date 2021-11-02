@@ -31,7 +31,7 @@ app.use(function(req,res,next){
 
 // require our custom routers
 const landingRoutes = require('./routes/landing')
-
+const productRoutes = require('./routes/products')
 async function main() {
 
     // first arg - the prefix
@@ -39,6 +39,7 @@ async function main() {
     // then the routes to use if the path
     // begins with the prefix
     app.use('/', landingRoutes);
+    app.use('/products', productRoutes);
 }
 
 main();

@@ -109,6 +109,11 @@ router.post('/:product_id/update', async function(req,res){
             product.set(form.data);
             await product.save();
             res.redirect('/products')
+        },
+        'error': (form) => {
+            res.render('products/update',{
+                'productForm': form
+            })
         }
     })
 })

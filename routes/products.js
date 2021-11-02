@@ -51,4 +51,27 @@ router.post('/add', async function(req,res){
     })
 })
 
+router.get('/:product_id/update', async function(req,res){
+    const productId = req.params.product_id;
+    // when we refer to the model class directly, we are addressing the table
+    // the code below is the same as : "SELECT * from products WHERE id=<product_id></product_id>"
+    const product = await Product.where({
+        'id': productId
+    }).fetch({
+        'require': true
+    });
+
+    const productForm = createProductForm();
+
+    // set the initial value of each of the form field
+    productForm.fields.name.value = product.get('name');
+    productForm.fields.cost.value = product.get('cost');
+    productForm.fields.description.value = product.get('description');
+
+    res.render('products/update', {
+        'form': productForm.toHTML(bootstrapField),
+        'product': product.toJSON()
+    })
+})
+
 module.exports = router;

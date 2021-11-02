@@ -23,6 +23,12 @@ app.use(
   })
 );
 
+// custom middleware goes here
+app.use(function(req,res,next){
+  res.locals.date = new Date();
+  next();
+})
+
 // require our custom routers
 const landingRoutes = require('./routes/landing')
 

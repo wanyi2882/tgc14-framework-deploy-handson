@@ -23,7 +23,10 @@ async function getProductById(productId) {
 
 router.get('/', async function (req, res) {
     // the model represents the entire table
-    let products = await Product.collection().fetch();
+    let products = await Product.collection().fetch({
+        'withRelated':['category','tags']
+    });
+    console.log(products.toJSON());
     res.render('products/index', {
         'products': products.toJSON() // convert the results to JSON
     })
@@ -48,7 +51,9 @@ router.get('/add', async function (req, res) {
 })
 
 router.post('/add', async function (req, res) {
-    const productForm = createProductForm();
+    const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
+    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    const productForm = createProductForm(allCategories, allTags);
     productForm.handle(req, {
         'empty': (form) => {
             // if the form is submitted empty, this will run

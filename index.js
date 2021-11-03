@@ -3,6 +3,11 @@ const hbs = require("hbs");
 const wax = require("wax-on");
 require("dotenv").config();
 
+// for sessions and flash messages
+const session = require('express-session');
+const flash = require('connect-flash');
+const FileStore = require('session-file-store')(session);
+
 // create an instance of express app
 let app = express();
 
@@ -29,9 +34,29 @@ app.use(function(req,res,next){
   next();
 })
 
+// setup sessions
+app.use(session({
+  'store': new FileStore(),
+  'secret': 'qz6tamEGgnjrRPqC8BgYP5FORLWKu9K4',
+  'resave': false, 
+  'saveUninitialized': true
+}))
+
+// setup our flash messages
+app.use(flash());
+
+// middleware to extact out the flash messages from
+// the session and make it available to all hbs files
+app.use(function(req,res,next){
+  res.locals.success_messages = req.flash('success_messages');
+  res.locals.error_messages = req.flash('error_messages');
+  next();
+})
+
 // require our custom routers
 const landingRoutes = require('./routes/landing')
 const productRoutes = require('./routes/products')
+const userRoutes = require('./routes/users')
 async function main() {
 
     // first arg - the prefix
@@ -40,6 +65,7 @@ async function main() {
     // begins with the prefix
     app.use('/', landingRoutes);
     app.use('/products', productRoutes);
+    app.use('/users', userRoutes);
 }
 
 main();

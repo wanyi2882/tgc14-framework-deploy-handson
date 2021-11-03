@@ -75,4 +75,61 @@ const createProductForm = (allCateogries, allTags) => {
     })
 }
 
-module.exports = { createProductForm, bootstrapField};
+const createSignupForm = ()=>{
+    return forms.create({
+        'username': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label': ['form-label']
+            }
+        }),
+        'email': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label': ['form-label']
+            }
+        }),
+        'password': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label': ['form-label']
+            },
+            'widget': widgets.password()
+        }),
+        'confirm_password': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label':['form-label']
+            },
+            'widget': widgets.password(),
+            'validators': [validators.matchField('password')]
+        })
+    })
+}
+
+const createLoginForm = () => {
+    return forms.create({
+        'email': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label': ['form-label']
+            }
+        }),
+        'password': fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
+                'label': ['form-label']
+            },
+            'widget': widgets.password()
+        })
+    })
+
+}
+
+module.exports = { createProductForm, createSignupForm, createLoginForm, bootstrapField};

@@ -26,7 +26,7 @@ router.get('/', async function (req, res) {
     let products = await Product.collection().fetch({
         'withRelated':['category','tags']
     });
-    console.log(products.toJSON());
+
     res.render('products/index', {
         'products': products.toJSON() // convert the results to JSON
     })
@@ -80,7 +80,10 @@ router.post('/add', async function (req, res) {
                 let selectedTags = tags.split(',');
                 await product.tags().attach(selectedTags);
             }
-
+            // add in a flash message to tell user that the product
+            // has been created successfully
+            req.flash('success_messages', 
+                      `New product ${product.get('name')} has been added successfully`)
             res.redirect('/products');
 
         },

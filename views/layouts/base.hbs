@@ -12,7 +12,23 @@
   </head>
   <body>
       <div class="container-fluid">
-            {{#block "content"}}{{/block}}
+        {{#if success_messages}}
+        <div class="alert alert-success">
+          {{#each success_messages}}
+            {{this}}
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if error_messages}}
+        <div class="alert alert-danger">
+          {{#each error_messages}}
+            {{this}}
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{#block "content"}}{{/block}}
       </div>
 
   

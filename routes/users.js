@@ -2,6 +2,14 @@ const express = require('express');
 const { createSignupForm, bootstrapField, createLoginForm } = require('../forms');
 const { User } = require('../models');
 const router = express.Router();
+const crypto = require('crypto');
+const { checkIfAuthenticated} = require('../middlewares');
+
+const getHashedPassword = (password) => {
+    const sha256 = crypto.createHash('sha256');
+    const hash = sha256.update(password).digest('base64');
+    return hash;
+}
 
 router.get('/register', (req,res)=>{
     const signUpForm = createSignupForm();
@@ -21,7 +29,7 @@ router.post('/register', (req,res)=>{
         'success': async(form) => {
             let user = new User({
                 'username': form.data.username,
-                'password': form.data.password,
+                'password': getHashedPassword(form.data.password),
                 'email': form.data.email
             });
             await user.save();
@@ -56,7 +64,7 @@ router.post('/login', (req,res)=>{
 
             // if that user exists, then we check the password matches
             if (user) {
-                if (user.get('password') == form.data.password) {
+                if (user.get('password') == getHashedPassword(form.data.password)) {
                     // login
                     req.session.user = {
                         'id': user.get('id'),
@@ -78,8 +86,19 @@ router.post('/login', (req,res)=>{
     })
 })
 
-router.get('/profile', (req,res)=>{
-    res.send(req.session.user);
+router.get('/profile', [checkIfAuthenticated], (req,res)=>{
+   
+        res.render('users/profile',{
+            'user': req.session.user
+        })
+   
+
 })
+
+router.get('/logout', [checkIfAuthenticated], (req,res)=>{
+    req.session.user = null;
+    req.flash('success_messages', "Logged out successfully");
+    res.redirect('/users/login');
+});
 
 module.exports = router;

@@ -7,7 +7,7 @@ require("dotenv").config();
 const session = require('express-session');
 const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
-
+const csrf = require('csurf');
 // create an instance of express app
 let app = express();
 
@@ -41,6 +41,15 @@ app.use(session({
   'resave': false, 
   'saveUninitialized': true
 }))
+
+// use the csurf middleware
+app.use(csrf());
+
+// global middleware 
+app.use(function(req,res,next){
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 // setup our flash messages
 app.use(flash());

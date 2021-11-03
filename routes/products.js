@@ -95,10 +95,18 @@ router.get('/:product_id/update', async function (req, res) {
     const product = await Product.where({
         'id': productId
     }).fetch({
-        'require': true
+        'require': true,
+        'withRelated':['tags'] // tell Bookshelf to fetch all the tags associated with the product
     });
+
+    // get all the related tags
+    const selectedTags = await product.related('tags').pluck('id');
+   
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
-    const productForm = createProductForm(allCategories);
+    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    const productForm = createProductForm(allCategories, allTags);
+    productForm.fields.tags.value = selectedTags;
+
 
     // set the initial value of each of the form field
     productForm.fields.name.value = product.get('name');
@@ -117,12 +125,14 @@ router.post('/:product_id/update', async function (req, res) {
     let product = await Product.where({
         'id': req.params.product_id
     }).fetch({
-        'require': true
+        'require': true,
+        'withRelated':['tags']
     });
 
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
-
-    const productForm = createProductForm(allCategories);
+    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    
+    const productForm = createProductForm(allCategories, allTags);
     productForm.handle(req, {
         'success': async (form) => {
             /* form.data contains an object that looks like this:
@@ -137,8 +147,33 @@ router.post('/:product_id/update', async function (req, res) {
             // product.set('cost', form.data.cost);
             // product.set('description', form.data.description);
             /* SQL: update products set name = .... where id =<product_id> */
-            product.set(form.data);
+            let {tags, ...productData} = form.data;
+            product.set(productData);
             await product.save();
+
+            // update the relationships:
+            // 1. any tags that WAS in the product but NOT selected anymore
+            //    will be removed
+            //
+            // 2. any tags that WASN'T in the product but IS selected now
+            //    will be added
+
+            // 3. any tags that WAS in the product and is STILL selected 
+            //    remain unchanged
+
+            console.log(tags);
+            let selectedTags = tags.split(',');
+
+            // get all the tags that are already associated with the product
+            let existingTagIds = await product.related('tags').pluck('id');
+
+            // 1. remove all the existing tags that aren't selected in the form
+            let toRemove = existingTagIds.filter( id => selectedTags.includes(id) === false );
+            await product.tags().detach(toRemove); 
+
+            // 2. add in all the selected tags to the form
+            await product.tags().attach(selectedTags);
+            
             res.redirect('/products')
         },
         'error': (form) => {

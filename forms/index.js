@@ -136,8 +136,46 @@ const createLoginForm = () => {
 
 const createSearchForm = (allCateogries, allTags) => {
     return forms.create({
-        'name': fields.string({
+        'name': fields.string({            
             required: false, // optional to enter a search terms
+            errorAfterField: true,
+            cssClasses: {
+                label:['form-label']
+            }
+        }),
+        'min_cost': fields.string({
+            required: false,
+            validators: [validators.integer(), validators.min(0)],
+            errorAfterField: true,
+            cssClasses: {
+                label:['form-label']
+            }       
+        }),
+        'max_cost': fields.string({
+            required: false,
+            validators: [validators.integer(), validators.min(0)],
+            errorAfterField: true,
+            cssClasses: {
+                label:['form-label']
+            }       
+        }),
+        'category': fields.string({
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label:['form-label']
+            },
+            choices: allCateogries,
+            widget: widgets.select()     
+        }),
+        'tags': fields.string({
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label:['form-label']
+            },
+            choices: allTags,
+            widget: widgets.multipleSelect()
         })
     })
 }

@@ -23,11 +23,9 @@ async function getProductById(productId) {
 }
 
 router.get('/', async function (req, res) {
-
-
-
-
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
+    allCategories.unshift([0, 'All categories']);
+   
     const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
     let searchForm = createSearchForm(allCategories, allTags);
 
@@ -40,14 +38,18 @@ router.get('/', async function (req, res) {
 
             res.render('products/index', {
                 'products': products.toJSON(), // convert the results to JSON
-                'searchForm': searchForm.toHTML(bootstrapField),
+                'searchForm': form.toHTML(bootstrapField),
                 'allCategories': allCategories,
                 'allTags': allTags
             })
         },
         'success': async (form) => {
             let name = form.data.name;
-
+            let min_cost = form.data.min_cost;
+            let max_cost = form.data.max_cost;
+            let category = parseInt(form.data.category);
+            let tags = form.data.tags;
+       
             // create a query that is the eqv. of "SELECT * FROM products WHERE 1"
             // this query is deferred because we never call fetch on it.
             // we have to execute it by calling fetch onthe query
@@ -59,8 +61,43 @@ router.get('/', async function (req, res) {
                 q.where('name', 'like', `%${name}%`);
             }
 
+            if (min_cost) {
+                q.where('cost', '>=', min_cost);
+            }
+
+            if (max_cost) {
+                q.where('cost', '<=', max_cost);
+            }
+
+            // check if cateogry is not 0, not undefined, not null, not empty string
+            if (category) {
+                q.where('category_id', '=', category);
+            }
+
+            // if tags is not empty
+            if (tags) {
+                let selectedTags = tags.split(',');
+                q.query('join', 'products_tags', 'products.id', 'product_id')
+                 .where('tag_id', 'in',selectedTags);
+            }
+
             // execute the query
-            let products = await q.fetch();
+            let products = await q.fetch({
+                'withRelated':['category', 'tags']
+            });
+            res.render('products/index', {
+                'products': products.toJSON(), // convert the results to JSON
+                'searchForm': form.toHTML(bootstrapField),
+                'allCategories': allCategories,
+                'allTags': allTags
+            })
+        },
+        'error': async(form) =>{
+             // the model represents the entire table
+             let products = await Product.collection().fetch({
+                'withRelated': ['category', 'tags']
+            });
+
             res.render('products/index', {
                 'products': products.toJSON(), // convert the results to JSON
                 'searchForm': form.toHTML(bootstrapField),

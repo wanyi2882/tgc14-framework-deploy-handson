@@ -13,6 +13,6 @@ select products.id from
  products join products_tags on products.id = products_tags.product_id
  where tag_id in (1,3)
  group by products.id
- having count(tag_id) >= 2
+ having count(tag_id) = 2
 );
  

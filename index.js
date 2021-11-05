@@ -37,7 +37,7 @@ app.use(function(req,res,next){
 // setup sessions
 app.use(session({
   'store': new FileStore(),
-  'secret': 'qz6tamEGgnjrRPqC8BgYP5FORLWKu9K4',
+  'secret': process.env.SESSION_SECRET,
   'resave': false, 
   'saveUninitialized': true
 }))

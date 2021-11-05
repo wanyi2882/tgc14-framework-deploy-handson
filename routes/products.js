@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { getProductById, getAllCategories, getAllTags } = require('../dal/products');
+
 // #1 require in the Product model
 const {
     Product,
@@ -13,20 +15,11 @@ const {
     createSearchForm
 } = require('../forms');
 
-async function getProductById(productId) {
-    let product = await Product.where({
-        'id': productId
-    }).fetch({
-        'require': true
-    });
-    return product;
-}
-
 router.get('/', async function (req, res) {
-    const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
+    const allCategories = await getAllCategories();
     allCategories.unshift([0, 'All categories']);
    
-    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    const allTags = await getAllTags();
     let searchForm = createSearchForm(allCategories, allTags);
 
     searchForm.handle(req, {

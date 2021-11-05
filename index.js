@@ -74,6 +74,7 @@ const landingRoutes = require('./routes/landing')
 const productRoutes = require('./routes/products')
 const userRoutes = require('./routes/users')
 const cloudinaryRoutes = require('./routes/cloudinary')
+const cartRoutes = require('./routes/cart')
 async function main() {
 
     // first arg - the prefix
@@ -84,6 +85,7 @@ async function main() {
     app.use('/products', productRoutes);
     app.use('/users', userRoutes);
     app.use('/cloudinary', cloudinaryRoutes);
+    app.use('/cart', cartRoutes)
 }
 
 main();

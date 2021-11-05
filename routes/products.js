@@ -105,7 +105,7 @@ router.get('/', async function (req, res) {
 
 // route to add a new product to the database
 router.get('/add', async function (req, res) {
-    const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
+    const allCategories = await getAllCategories();
     /* example output of allCategories:
         [
             [1, "soy-based"],
@@ -115,7 +115,7 @@ router.get('/add', async function (req, res) {
         ]
 
     */
-    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    const allTags = await getAllTags();
     const productForm = createProductForm(allCategories, allTags);
     res.render('products/add', {
         'productForm': productForm.toHTML(bootstrapField),
@@ -256,7 +256,6 @@ router.post('/:product_id/update', async function (req, res) {
             // 3. any tags that WAS in the product and is STILL selected 
             //    remain unchanged
 
-            console.log(tags);
             let selectedTags = tags.split(',');
 
             // get all the tags that are already associated with the product

@@ -70,8 +70,10 @@ const createProductForm = (allCateogries, allTags) => {
             },
             widget: widgets.multipleSelect(),
             choices: allTags
+        }),
+        'image_url': fields.string({
+            widget: widgets.hidden()
         })
-
     })
 }
 

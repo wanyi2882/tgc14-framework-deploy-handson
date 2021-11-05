@@ -24,7 +24,7 @@ async function getProductById(productId) {
 router.get('/', async function (req, res) {
     // the model represents the entire table
     let products = await Product.collection().fetch({
-        'withRelated':['category','tags']
+        'withRelated': ['category', 'tags']
     });
 
     res.render('products/index', {
@@ -32,6 +32,7 @@ router.get('/', async function (req, res) {
     })
 })
 
+// route to add a new product to the database
 router.get('/add', async function (req, res) {
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
     /* example output of allCategories:
@@ -46,7 +47,10 @@ router.get('/add', async function (req, res) {
     const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
     const productForm = createProductForm(allCategories, allTags);
     res.render('products/add', {
-        'productForm': productForm.toHTML(bootstrapField)
+        'productForm': productForm.toHTML(bootstrapField),
+        'cloudinaryName': process.env.CLOUDINARY_NAME,
+        'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+        'cloudinaryUploadPreset': process.env.CLOUDINARY_UPLOAD_PRESET
     })
 })
 
@@ -71,7 +75,10 @@ router.post('/add', async function (req, res) {
             // product.set('cost', form.data.cost);
             // product.set('description', form.data.description);
             // product.set('category_id', form.data.category_id);
-            let {tags, ...productData} = form.data;
+            let {
+                tags,
+                ...productData
+            } = form.data;
             product.set(productData);
             await product.save();
 
@@ -82,15 +89,18 @@ router.post('/add', async function (req, res) {
             }
             // add in a flash message to tell user that the product
             // has been created successfully
-            req.flash('success_messages', 
-                      `New product ${product.get('name')} has been added successfully`)
+            req.flash('success_messages',
+                `New product ${product.get('name')} has been added successfully`)
             res.redirect('/products');
 
         },
         'error': (form) => {
             // if the form has errors (i.e some fields failed validation)
             res.render('products/add', {
-                'productForm': form.toHTML(bootstrapField)
+                'productForm': form.toHTML(bootstrapField),
+                'cloudinaryName': process.env.CLOUDINARY_NAME,
+                'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+                'cloudinaryUploadPreset': process.env.CLOUDINARY_UPLOAD_PRESET
             })
         }
     })
@@ -104,12 +114,12 @@ router.get('/:product_id/update', async function (req, res) {
         'id': productId
     }).fetch({
         'require': true,
-        'withRelated':['tags'] // tell Bookshelf to fetch all the tags associated with the product
+        'withRelated': ['tags'] // tell Bookshelf to fetch all the tags associated with the product
     });
 
     // get all the related tags
     const selectedTags = await product.related('tags').pluck('id');
-   
+
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
     const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
     const productForm = createProductForm(allCategories, allTags);
@@ -134,12 +144,12 @@ router.post('/:product_id/update', async function (req, res) {
         'id': req.params.product_id
     }).fetch({
         'require': true,
-        'withRelated':['tags']
+        'withRelated': ['tags']
     });
 
     const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
     const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
-    
+
     const productForm = createProductForm(allCategories, allTags);
     productForm.handle(req, {
         'success': async (form) => {
@@ -155,7 +165,10 @@ router.post('/:product_id/update', async function (req, res) {
             // product.set('cost', form.data.cost);
             // product.set('description', form.data.description);
             /* SQL: update products set name = .... where id =<product_id> */
-            let {tags, ...productData} = form.data;
+            let {
+                tags,
+                ...productData
+            } = form.data;
             product.set(productData);
             await product.save();
 
@@ -176,12 +189,12 @@ router.post('/:product_id/update', async function (req, res) {
             let existingTagIds = await product.related('tags').pluck('id');
 
             // 1. remove all the existing tags that aren't selected in the form
-            let toRemove = existingTagIds.filter( id => selectedTags.includes(id) === false );
-            await product.tags().detach(toRemove); 
+            let toRemove = existingTagIds.filter(id => selectedTags.includes(id) === false);
+            await product.tags().detach(toRemove);
 
             // 2. add in all the selected tags to the form
             await product.tags().attach(selectedTags);
-            
+
             res.redirect('/products')
         },
         'error': (form) => {

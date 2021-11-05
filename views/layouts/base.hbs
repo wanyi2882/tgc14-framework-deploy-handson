@@ -12,6 +12,36 @@
   </head>
   <body>
       <div class="container-fluid">
+
+        <nav class="navbar navbar-expand-sm bg-light">
+          <div class="container-fluid">
+            <!-- Links -->
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/products">Catalog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link 2</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link 3</a>
+              </li>
+            </ul>
+            <div>
+              <div>
+                {{#if user}}
+                  Hi, {{user.username}}
+                  <a href="/users/logout" class="btn btn-secondary btn-sm">Logout</a>
+                {{else}}
+                  Welcome, guest. 
+                  <a href="/users/login" class="btn btn-primary btn-sm">Login</a>
+                {{/if}}
+
+              </div>
+          </div>
+        </nav>
+
+
         {{#if success_messages}}
         <div class="alert alert-success">
           {{#each success_messages}}

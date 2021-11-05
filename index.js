@@ -62,6 +62,13 @@ app.use(function(req,res,next){
   next();
 })
 
+// share the current logged in user with all hbs files
+app.use(function(req, res, next){
+  res.locals.user = req.session.user;
+  // be sure to call the next() function in your middleware
+  next();
+})
+
 // require our custom routers
 const landingRoutes = require('./routes/landing')
 const productRoutes = require('./routes/products')

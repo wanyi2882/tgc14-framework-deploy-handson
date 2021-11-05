@@ -134,7 +134,10 @@ router.get('/:product_id/update', async function (req, res) {
 
     res.render('products/update', {
         'productForm': productForm.toHTML(bootstrapField),
-        'product': product.toJSON()
+        'product': product.toJSON(),
+        'cloudinaryName': process.env.CLOUDINARY_NAME,
+        'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+        'cloudinaryUploadPreset': process.env.CLOUDINARY_UPLOAD_PRESET
     })
 })
 

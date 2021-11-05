@@ -74,6 +74,7 @@ const createProductForm = (allCateogries, allTags) => {
         'image_url': fields.string({
             widget: widgets.hidden()
         })
+        
     })
 }
 
@@ -131,7 +132,14 @@ const createLoginForm = () => {
             'widget': widgets.password()
         })
     })
-
 }
 
-module.exports = { createProductForm, createSignupForm, createLoginForm, bootstrapField};
+const createSearchForm = (allCateogries, allTags) => {
+    return forms.create({
+        'name': fields.string({
+            required: false, // optional to enter a search terms
+        })
+    })
+}
+
+module.exports = { createProductForm, createSignupForm, createLoginForm, createSearchForm, bootstrapField};

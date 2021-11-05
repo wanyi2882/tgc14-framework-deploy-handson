@@ -9,7 +9,8 @@ const {
 } = require('../models')
 const {
     bootstrapField,
-    createProductForm
+    createProductForm,
+    createSearchForm
 } = require('../forms');
 
 async function getProductById(productId) {
@@ -22,14 +23,54 @@ async function getProductById(productId) {
 }
 
 router.get('/', async function (req, res) {
-    // the model represents the entire table
-    let products = await Product.collection().fetch({
-        'withRelated': ['category', 'tags']
-    });
 
-    res.render('products/index', {
-        'products': products.toJSON() // convert the results to JSON
+
+
+
+    const allCategories = await Category.fetchAll().map(c => [c.get('id'), c.get('name')]);
+    const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
+    let searchForm = createSearchForm(allCategories, allTags);
+
+    searchForm.handle(req, {
+        'empty': async (form) => {
+            // the model represents the entire table
+            let products = await Product.collection().fetch({
+                'withRelated': ['category', 'tags']
+            });
+
+            res.render('products/index', {
+                'products': products.toJSON(), // convert the results to JSON
+                'searchForm': searchForm.toHTML(bootstrapField),
+                'allCategories': allCategories,
+                'allTags': allTags
+            })
+        },
+        'success': async (form) => {
+            let name = form.data.name;
+
+            // create a query that is the eqv. of "SELECT * FROM products WHERE 1"
+            // this query is deferred because we never call fetch on it.
+            // we have to execute it by calling fetch onthe query
+            let q = Product.collection();
+            
+            // if name is not undefined, not null and not empty string
+            if (name) {
+                // add a where clause to its back
+                q.where('name', 'like', `%${name}%`);
+            }
+
+            // execute the query
+            let products = await q.fetch();
+            res.render('products/index', {
+                'products': products.toJSON(), // convert the results to JSON
+                'searchForm': form.toHTML(bootstrapField),
+                'allCategories': allCategories,
+                'allTags': allTags
+            })
+        }
     })
+
+
 })
 
 // route to add a new product to the database
@@ -220,4 +261,6 @@ router.post('/:product_id/delete', async function (req, res) {
     await product.destroy();
     res.redirect('/products')
 })
+
+
 module.exports = router;

@@ -1,14 +1,14 @@
-const { CartItem } = require('../models');
+const {
+    CartItem
+} = require('../models');
 
 async function getShoppingCartForUser(userId) {
     return await CartItem.collection().where({
         'user_id': userId
-    }).fetch(
-        {
-            require:false,
-            withRelated:['product', 'product.category']
-        }
-    );
+    }).fetch({
+        require: false,
+        withRelated: ['product', 'product.category']
+    });
 }
 
 async function createCartItem(userId, productId, quantity) {
@@ -39,6 +39,16 @@ async function updateQuantity(userId, productId, newQuantity) {
     await cartItem.save();
 }
 
+async function removeFromCart(userId, productId) {
+    let cartItem = await getCartItemByUserAndProduct(userId, productId);
+    await cartItem.destroy();
+}
 
 
-module.exports = {createCartItem, getCartItemByUserAndProduct, updateQuantity, getShoppingCartForUser};
+module.exports = {
+    createCartItem,
+    getCartItemByUserAndProduct,
+    updateQuantity,
+    getShoppingCartForUser,
+    removeFromCart
+};

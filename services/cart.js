@@ -6,17 +6,24 @@ async function getShoppingCart(userId)  {
 }
 
 async function addItemToCart(userId,productId) {
-    // check if the user has already added the product to the cart
-    let cartItem = await cartDataLayer.getCartItemByUserAndProduct(userId, productId);
+    try {
+        // check if the user has already added the product to the cart
+        let cartItem = await cartDataLayer.getCartItemByUserAndProduct(userId, productId);
 
-    if (cartItem) {
-        // increase quantity by 1
-        await cartDataLayer.updateQuantity(userId, productId, cartItem.get('quantity')+1);
-        return true;
-    } else {
-        await cartDataLayer.createCartItem(userId, productId, 1);       
-        return true;   
+        if (cartItem) {
+            // increase quantity by 1
+            await cartDataLayer.updateQuantity(userId, productId, cartItem.get('quantity')+1);
+            return true;
+        } else {
+            await cartDataLayer.createCartItem(userId, productId, 1);       
+            return true;   
+        } 
+    } catch (e) {
+        return {
+            'status': false
+        }
     }
+
 }
 
 async function updateQuantityInCart(userId, productId, newQuantity) {
@@ -29,5 +36,11 @@ async function updateQuantityInCart(userId, productId, newQuantity) {
     }
 }
 
-module.exports = { addItemToCart, getShoppingCart, updateQuantityInCart };
+async function removeFromCart(userId, productId) {
+    // todo: checks
+    await cartDataLayer.removeFromCart(userId, productId);
+    return true;
+}
+
+module.exports = { addItemToCart, getShoppingCart, updateQuantityInCart, removeFromCart };
 

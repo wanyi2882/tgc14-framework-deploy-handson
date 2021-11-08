@@ -5,13 +5,28 @@
 {{#each cartItems}} 
     <div class="card my-3">
         <div class="card-body">
-            <h3 class="card-title">{{this.product.name}} x {{this.quantity}}</h3> 
+            <h3 class="card-title">{{this.product.name}}</h3> 
             <div>
-                {{this.product.description}}
+                <div>                  
+                    <form method="POST" action="/cart/{{this.product.id}}/quantity/update"> 
+                        <input type="hidden" name="_csrf" value="{{../this.csrfToken}}"/>
+                        <label>  Quantity: </label>
+                        <input type="text" name="newQuantity" value="{{this.quantity}}" style="width:50px"/>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Update"/>
+                    </form>
+                </div>
+                <div>
+                    {{this.product.description}}
+                </div>
                 <ul>
                     <li>Category: {{this.product.category.name}}</li>
-                    <li>Cost: {{this.product.cost}}</li>
+                    <li>Cost: {{this.product.cost}}</li>                    
                 </ul>
+                <form method="POST" action="/cart/{{this.product.id}}/delete">
+                    <input type="hidden" name="_csrf" value="{{../csrfToken}}"/>
+                    <input type="submit" class="btn btn-danger btn-sm" value="Remove from Cart"/>
+                </form>
+
             </div>
         </div>
     </div>

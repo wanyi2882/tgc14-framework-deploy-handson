@@ -39,4 +39,6 @@ async function updateQuantity(userId, productId, newQuantity) {
     await cartItem.save();
 }
 
+
+
 module.exports = {createCartItem, getCartItemByUserAndProduct, updateQuantity, getShoppingCartForUser};

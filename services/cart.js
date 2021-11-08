@@ -19,4 +19,15 @@ async function addItemToCart(userId,productId) {
     }
 }
 
-module.exports = { addItemToCart, getShoppingCart };
+async function updateQuantityInCart(userId, productId, newQuantity) {
+    // todo: check for any business rules
+    if (newQuantity > 0) {
+        await cartDataLayer.updateQuantity(userId, productId, newQuantity);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+module.exports = { addItemToCart, getShoppingCart, updateQuantityInCart };
+

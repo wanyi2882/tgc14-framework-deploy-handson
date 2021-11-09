@@ -46,7 +46,8 @@ app.use(session({
 // app.use(csrf());
 const csrfInstance = csrf();
 app.use(function(req,res,next){
-  if (req.url == "/checkout/process_payment") {
+  if (req.url == "/checkout/process_payment" ||
+     req.url.slice(0,5) == '/api/' ) {
     // don't perform csrf checks
     next();
   } else {
@@ -107,7 +108,7 @@ async function main() {
     app.use('/checkout', checkoutRoutes);
 
     // register the API routes
-    app.use('/api/products', api.products);
+    app.use('/api/products', express.json(), api.products);
 }
 
 main();

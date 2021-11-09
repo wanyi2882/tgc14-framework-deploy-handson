@@ -4,6 +4,10 @@ const {
     Tag
 } = require('../models')
 
+async function getAllProducts() {
+    return await Product.fetchAll();
+}
+
 async function getProductById(productId) {
     let product = await Product.where({
         'id': productId
@@ -23,4 +27,9 @@ async function getAllTags() {
     return allTags;
 }
 
-module.exports = { getProductById, getAllCategories, getAllTags}
+module.exports = {
+    getProductById,
+    getAllCategories,
+    getAllTags,
+    getAllProducts
+}

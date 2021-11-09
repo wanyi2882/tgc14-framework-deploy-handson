@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const checkIfAuthenticated = (req, res, next) => {
 
     if (req.session.user) {
@@ -8,4 +10,23 @@ const checkIfAuthenticated = (req, res, next) => {
     }
 }
 
-module.exports = { checkIfAuthenticated};
+const checkIfAuthenticatedJWT = (req,res,next) => {
+    // try to get authorization headers
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+        jwt.verify(token, process.env.TOKEN_SECRET, (err,user)=>{
+            if (err) {
+                res.sendStatus(403);
+            } else {
+                // store the current logged in user inside req.user
+                req.user = user;
+                next();
+            }
+        })
+    } else {
+        res.sendStatus(401);
+    }
+}
+
+module.exports = { checkIfAuthenticated, checkIfAuthenticatedJWT};

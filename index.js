@@ -1,6 +1,7 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
+const cors = require('cors');
 require("dotenv").config();
 
 // for sessions and flash messages
@@ -13,6 +14,9 @@ let app = express();
 
 // set the view engine
 app.set("view engine", "hbs");
+
+// use cors
+app.use(cors());
 
 // static folder
 app.use(express.static("public"));

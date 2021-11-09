@@ -14,6 +14,8 @@ const checkIfAuthenticatedJWT = (req,res,next) => {
     // try to get authorization headers
     const authHeader = req.headers.authorization;
     if (authHeader) {
+        // the authHeader will be a string that is like
+        // "Bearer <ACCESS_TOKEN>"
         const token = authHeader.split(' ')[1];
         jwt.verify(token, process.env.TOKEN_SECRET, (err,user)=>{
             if (err) {

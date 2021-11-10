@@ -1,6 +1,9 @@
 # How to setup
 
-1. Update database connections in `database.json`
+1. Install all dependencies:
+```
+yarn install
+```
 
 2. Log into mysql client with `mysql -u root`
 
@@ -26,16 +29,21 @@ FLUSH PRIVILEGES;
 
 # Sample .env file
 ```
-CLOUDINARY_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-CLOUDINARY_UPLOAD_PRESET=
+CLOUDINARY_NAME=dg6ci8nip
+CLOUDINARY_API_KEY=798942815659624
+CLOUDINARY_SECRET=TPsNMuDGTVva7lAkc7pFnZwcja0
+CLOUDINARY_UPLOAD_PRESET=tgc14-uploads
 DB_DRIVER=mysql
 DB_USER=foo
 DB_PASSWORD=bar
 DB_DATABASE=organic
 DB_HOST=localhost
-SESSION_SECRET_KEY=
-STRIPE_PUBLISHABLE_KEY=
-STRIPE_SECRET_KEY=
+SESSION_SECRET=qz6tamEGgnjrRPqC8BgYP5FORLWKu9K4
+STRIPE_PUBLISHABLE_KEY=pk_test_cjZ0FuGOglBmUeCFc6ToHLr8
+STRIPE_SECRET_KEY=sk_test_vgMxhrVz9VcFwa9SXemYtPZl
+STRIPE_ENDPOINT_SECRET=whsec_RkfJ3EnLUv0ja7STRlhJj0KneWnjDre3
+STRIPE_SUCCESS_URL=https://3000-chocolate-badger-q3jm8eid.ws-us18.gitpod.io/checkout/success
+STRIPE_CANCEL_URL=https://3000-chocolate-badger-q3jm8eid.ws-us18.gitpod.io/checkout/cancel
+TOKEN_SECRET=aI8qWqOn3xxqbuOvqtPZre7f9R2lmOJr
+REFRESH_TOKEN_SECRET=fEFJsDi2kmRc6k6SEIvqzs3gdWNC6Bo9
 ```

@@ -23,7 +23,7 @@ FLUSH PRIVILEGES;
 
 6. Add permission to run ./db-migrate.sh with `chmod +x ./db-migrate.sh
 
-7. Install all node modules with `yarn install`
+7. Update your .env file
 
 8. Run all migrations with `./db-migrate.sh up`
 
